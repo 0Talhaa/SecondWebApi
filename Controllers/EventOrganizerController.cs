@@ -115,5 +115,47 @@ namespace NewWebApi.Controllers
                 return BadRequest("INVALID DATA");
             }
         }
-    }
+
+        [HttpGet("Search/{q}")]
+        public IActionResult SearchEvent(string q)
+        {
+            if (q != null)
+            {
+                var Event = db.Events.Include(t => t.EventType).Where(t => t.CustomerName.Contains(q) || t.EventType.Type.Contains(q));
+                if (Event != null)
+                {
+                    
+                    return Ok(Event);
+                }
+                else
+                {
+                    return Ok("Event Not Found");
+                }
+            }
+            else
+            {
+                return BadRequest("INVALID DATA");
+            }
+        }
+
+        [HttpGet("Pagination/{PageNo}/{PageSize}")]
+        public IActionResult Pagination(int PageNo=1, int PageSize=2)
+        {
+            int pageno = PageNo;
+            if (pageno < 1) pageno = 1;
+            int pagesize = PageSize;
+            if (pagesize < 1) pagesize = 1;
+            
+                var getevents = db.Events.Include(i => i.EventType).Skip((pageno - 1) * pagesize).Take(pagesize)  ;
+                if (getevents != null)
+                {
+
+                    return Ok(getevents);
+                }
+                else
+                {
+                    return Ok("Event Not Found");
+                }
+            }
+        }
 }

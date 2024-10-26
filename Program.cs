@@ -3,6 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using NewWebApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("https://localhost:7129/") // Replace with your client's URL
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -24,6 +33,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
